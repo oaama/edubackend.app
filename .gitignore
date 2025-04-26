@@ -1,0 +1,15 @@
+# ملفات البيئة
+.env
+
+# حزم npm
+node_modules/
+
+# الملفات المرفوعة
+uploads/
+
+# ملفات النظام
+.DS_Store
+Thumbs.db
+
+# ملفات السجلات
+*.log

@@ -4,12 +4,17 @@ const express = require('express');
 const mongoose = require('mongoose');
 // تحميل متغيرات البيئة من ملف .env
 require('dotenv').config();
+
 const userRoutes = require('./routes/userRoute');
 const courseRoutes = require('./routes/courseRoutes');
 const videoRoutes = require('./routes/videoRoutes');
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const errorMiddleware = require('./middleware/errorHandler');
+const adminRoutes = require('./routes/adminRoutes');
+const playerRoutes = require('./routes/playerRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
+const materialRoutes = require('./routes/materialRouts'); // ✅ إضافة استدعاء materialRoutes
 
 // إنشاء الأبليكيشن نفسه من express
 const app = express();
@@ -21,9 +26,6 @@ app.use(express.json());
 const connectDB = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI, {
-            // دول كانوا مستخدمين في إصدارات قديمة، مش محتاجينهم دلوقتي
-            // useNewUrlParser: true,
-            // useUnifiedTopology: true,
             serverSelectionTimeoutMS: 5000, // لو السيرفر مأخدش رد خلال 5 ثواني يوقف
             family: 4 // يجبر الاتصال يستخدم IPv4 بدل IPv6
         });
@@ -39,12 +41,15 @@ const connectDB = async () => {
 connectDB();
 
 // ❗️هنا هنضيف بعدين الراوتس
-// مثال:
 app.use('/api/users', userRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/videos', videoRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/materials', materialRoutes); // ✅ تم إضافة المسار
+app.use('/api/player', playerRoutes);
+app.use('/api/settings', settingsRoutes);
 
 // Error Handling Middleware
 app.use(errorMiddleware);

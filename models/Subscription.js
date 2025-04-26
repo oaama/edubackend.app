@@ -1,12 +1,11 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const subscriptionSchema = new mongoose.Schema(
-  {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    course: { type: mongoose.Schema.Types.ObjectId, ref: "Course", required: true },
-    status: { type: String, enum: ["active", "expired"], default: "active" },
-  },
-  { timestamps: true }
-);
+const subscriptionSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // المستخدم
+  courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Course', required: true }, // الكورس
+  startDate: { type: Date, required: true }, // تاريخ بدء الاشتراك
+  endDate: { type: Date, required: true }, // تاريخ انتهاء الاشتراك
+  createdAt: { type: Date, default: Date.now }, // تاريخ الإنشاء
+});
 
-module.exports = mongoose.model("Subscription", subscriptionSchema);
+module.exports = mongoose.model('Subscription', subscriptionSchema);
