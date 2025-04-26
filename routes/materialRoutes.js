@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../middleware/uploadMiddleware');
-const materialController = require('../controllers/materilController');
+const materialController = require('../controllers/materialController');
+
 
 // ✅ رفع ملف PDF/ZIP
 router.post('/:courseId', upload.single('file'), materialController.uploadMaterial);

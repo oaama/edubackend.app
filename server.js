@@ -14,7 +14,8 @@ const errorMiddleware = require('./middleware/errorHandler');
 const adminRoutes = require('./routes/adminRoutes');
 const playerRoutes = require('./routes/playerRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
-const materialRoutes = require('./routes/materialRouts'); // ✅ إضافة استدعاء materialRoutes
+const materialRoutes = require('./routes/materialRoutes');
+ // ✅ إضافة استدعاء materialRoutes
 
 // إنشاء الأبليكيشن نفسه من express
 const app = express();
