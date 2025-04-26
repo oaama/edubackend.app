@@ -1,4 +1,4 @@
-const Material = require('../models/Material');
+const Material = require('../models/Materail');
 
 // ✅ رفع ملف PDF/ZIP
 exports.uploadMaterial = async (req, res) => {
