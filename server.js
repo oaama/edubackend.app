@@ -1,58 +1,62 @@
 // استدعاء مكتبة إكسبريس لتشغيل السيرفر
 const express = require('express');
-// استدعاء مكتبة Mongoose علشان نربط مع MongoDB
+// استدعاء مكتبة Mongoose لربط التطبيق مع MongoDB
 const mongoose = require('mongoose');
 // تحميل متغيرات البيئة من ملف .env
 require('dotenv').config();
 
+// استدعاء الملفات الخاصة بالمسارات
 const userRoutes = require('./routes/userRoute');
 const courseRoutes = require('./routes/courseRoutes');
 const videoRoutes = require('./routes/videoRoutes');
 const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
-const errorMiddleware = require('./middleware/errorHandler');
 const adminRoutes = require('./routes/adminRoutes');
 const playerRoutes = require('./routes/playerRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
 const materialRoutes = require('./routes/materialRoutes');
- // ✅ إضافة استدعاء materialRoutes
+const authRoutes = require('./routes/authRoute'); // ✅ استدعاء مسار المصادقة
 
-// إنشاء الأبليكيشن نفسه من express
+// استدعاء Middleware لمعالجة الأخطاء
+const errorMiddleware = require('./middleware/errorHandler');
+
+// إنشاء التطبيق باستخدام Express
 const app = express();
 
-// نحتاج ده علشان نقدر نستقبل داتا بصيغة JSON من البوست ريكوست
+// تمكين استقبال البيانات بصيغة JSON من الطلبات
 app.use(express.json());
 
 // ✅ الاتصال بقاعدة البيانات MongoDB
 const connectDB = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI, {
-            serverSelectionTimeoutMS: 5000, // لو السيرفر مأخدش رد خلال 5 ثواني يوقف
-            family: 4 // يجبر الاتصال يستخدم IPv4 بدل IPv6
+            serverSelectionTimeoutMS: 5000, // إذا لم يتم الاتصال خلال 5 ثوانٍ، يتم الإنهاء
+            family: 4 // يجبر الاتصال على استخدام IPv4 بدلًا من IPv6
         });
 
         console.log("✅ MongoDB Connected Successfully!");
     } catch (error) {
         console.error("❌ MongoDB Connection Error:", error);
-        process.exit(1); // يوقف السيرفر لو حصل خطأ
+        process.exit(1); // إنهاء التطبيق إذا فشل الاتصال
     }
 };
 
-// تنفيذ الفنكشن اللي بتربط بقاعدة البيانات
+// تنفيذ الاتصال بقاعدة البيانات
 connectDB();
 
-// ❗️هنا هنضيف بعدين الراوتس
+// ✅ إعداد المسارات
 app.use('/api/users', userRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/videos', videoRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
-app.use('/api/materials', materialRoutes); // ✅ تم إضافة المسار
+app.use('/api/materials', materialRoutes);
 app.use('/api/player', playerRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/auth', authRoutes); // ✅ تم تصحيح المسار
 
-// Error Handling Middleware
+// Middleware لمعالجة الأخطاء
 app.use(errorMiddleware);
 
 // ✅ تشغيل السيرفر
