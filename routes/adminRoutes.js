@@ -5,6 +5,7 @@ const Subscription = require('../models/Subscription');
 const User = require('../models/User');
 const Course = require('../models/Course');
 const sendEmail = require('../utils/sendEmail'); // استدعاء وظيفة إرسال البريد الإلكتروني
+const upload = require('../middleware/uploadMiddleware'); // استدعاء Middleware رفع الملفات
 
 // ✅ عرض كل المستخدمين
 router.get('/users', adminController.getAllUsers);
@@ -57,5 +58,15 @@ router.post('/subscriptions/activate', async (req, res) => {
     res.status(500).json({ msg: '❌ حصلت مشكلة أثناء تفعيل الكورس', error: err.message });
   }
 });
+
+// ✅ رفع الملفات (صور أو فيديوهات)
+router.post(
+  '/upload',
+  upload.fields([
+    { name: 'thumbnail', maxCount: 1 }, // صورة مصغرة
+    { name: 'video', maxCount: 1 }, // فيديو
+  ]),
+  adminController.uploadFile
+);
 
 module.exports = router;
