@@ -5,9 +5,13 @@ const roleMiddleware = (roles) => {
       return res.status(401).json({ message: '❌ Unauthorized: يجب تسجيل الدخول أولاً!' });
     }
 
+    // السماح للأدمن بالوصول إلى جميع المسارات
+    if (req.user.role === 'admin') {
+      return next();
+    }
+
     // التحقق من صلاحيات المستخدم
     if (!roles.includes(req.user.role)) {
-      console.warn(`❌ Access Denied: User with role '${req.user.role}' tried to access this route.`);
       return res.status(403).json({ message: '❌ Access Denied: مش مسموح ليك تعمل العملية دي!' });
     }
 
