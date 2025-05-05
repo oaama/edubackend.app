@@ -48,3 +48,27 @@ exports.deleteUser = async (req, res) => {
     res.status(500).json({ message: '❌ فشل في حذف المستخدم', error: error.message });
   }
 };
+
+// ✅ رفع الملفات (صور أو فيديوهات)
+exports.uploadFile = (req, res) => {
+  try {
+    const files = req.files;
+
+    if (!files || Object.keys(files).length === 0) {
+      return res.status(400).json({ message: '❌ لم يتم رفع أي ملفات' });
+    }
+
+    const uploadedFiles = {};
+    if (files.thumbnail) {
+      uploadedFiles.thumbnail = files.thumbnail[0].path;
+    }
+    if (files.video) {
+      uploadedFiles.video = files.video[0].path;
+    }
+
+    res.status(200).json({ message: '✅ تم رفع الملفات بنجاح', files: uploadedFiles });
+  } catch (error) {
+    console.error('❌ Error uploading files:', error);
+    res.status(500).json({ message: '❌ فشل في رفع الملفات', error: error.message });
+  }
+};
