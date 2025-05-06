@@ -46,11 +46,11 @@ connectDB();
 
 // ✅ إعداد المسارات
 app.use('/api/users', userRoutes);
-app.use('/api/courses', courseRoutes);
+app.use('/api/courses', courseRoutes); // مسارات الكورسات
 app.use('/api/videos', videoRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/api/notifications', notificationRoutes);
-app.use('/api/admin', adminRoutes);
+app.use('/api/admin', adminRoutes); // مسارات الإدارة
 app.use('/api/materials', materialRoutes);
 app.use('/api/player', playerRoutes);
 app.use('/api/settings', settingsRoutes);
