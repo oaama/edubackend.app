@@ -12,9 +12,10 @@ const roleMiddleware = (roles) => {
 
     // التحقق من صلاحيات المستخدم
     if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ message: '❌ Access Denied: مش مسموح ليك تعمل العملية دي!' });
+      return res.status(403).json({ message: '❌ Access Denied: ليس لديك الصلاحية للوصول إلى هذا المورد!' });
     }
 
+    // السماح بالوصول إذا كانت الصلاحيات صحيحة
     next();
   };
 };
