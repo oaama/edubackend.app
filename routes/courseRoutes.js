@@ -15,7 +15,7 @@ router.get('/:id', courseController.getCourseById);
 router.post(
   '/create',
   authMiddleware,
-  roleMiddleware(['instructor']),
+  roleMiddleware(['instructor','admin']),
   upload.single('courseImage'), // إضافة Middleware رفع صورة الكورس
   courseController.createCourse
 );
