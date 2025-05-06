@@ -56,6 +56,11 @@ exports.register = async (req, res) => {
       return res.status(400).json({ msg: "❌ الإيميل مستخدم بالفعل" });
     }
 
+    // التحقق من رفع صورة الكارنيه
+    if (!req.files || !req.files['collegeId']) {
+      return res.status(400).json({ msg: "❌ صورة الكارنيه مطلوبة" });
+    }
+
     // تشفير كلمة المرور
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -63,9 +68,7 @@ exports.register = async (req, res) => {
     const profileImage = req.files['profileImage']
       ? req.files['profileImage'][0].path
       : null;
-    const collegeId = req.files['collegeId']
-      ? req.files['collegeId'][0].path
-      : null;
+    const collegeId = req.files['collegeId'][0].path;
 
     // إنشاء المستخدم
     const user = await User.create({
