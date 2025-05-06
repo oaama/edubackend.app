@@ -25,7 +25,7 @@ exports.getCourseById = async (req, res) => {
   }
 };
 
-// ✅ إنشاء كورس جديد
+// ✅ إنشاء كورس جديد مع رفع صورة وفيديوهات
 exports.createCourse = async (req, res) => {
   try {
     const { title, description, price, category } = req.body;
@@ -34,15 +34,22 @@ exports.createCourse = async (req, res) => {
       return res.status(400).json({ error: '❌ يرجى ملء جميع الحقول المطلوبة: title, description, price, category' });
     }
 
-    const courseImage = req.file ? req.file.path : null;
+    // التحقق من رفع صورة الكورس
+    const courseImage = req.files['courseImage'] ? req.files['courseImage'][0].path : null;
 
+    // التحقق من رفع الفيديوهات
+    const videos = req.files['videos'] ? req.files['videos'].map(file => file.path) : [];
+
+    // إنشاء الكورس
     const course = new Course({
       title,
       description,
       price,
       category,
       courseImage,
+      videos,
     });
+
     await course.save();
     res.status(201).json({ message: '✅ تم إنشاء الكورس بنجاح!', course });
   } catch (err) {
@@ -66,8 +73,11 @@ exports.updateCourse = async (req, res) => {
     }
 
     const updates = { ...req.body };
-    if (req.file) {
-      updates.courseImage = req.file.path;
+    if (req.files['courseImage']) {
+      updates.courseImage = req.files['courseImage'][0].path;
+    }
+    if (req.files['videos']) {
+      updates.videos = req.files['videos'].map(file => file.path);
     }
 
     const updatedCourse = await Course.findByIdAndUpdate(req.params.id, updates, { new: true, runValidators: true });

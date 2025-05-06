@@ -1,5 +1,13 @@
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
+
+// إنشاء المجلد إذا لم يكن موجودًا
+const ensureFolderExists = (folder) => {
+  if (!fs.existsSync(folder)) {
+    fs.mkdirSync(folder, { recursive: true });
+  }
+};
 
 // إعداد مكان تخزين الملفات
 const storage = multer.diskStorage({
@@ -7,14 +15,16 @@ const storage = multer.diskStorage({
     // تحديد مكان التخزين بناءً على نوع الملف
     let folder;
     if (file.mimetype.startsWith('video')) {
-      folder = 'uploads/videos';
+      folder = 'uploads/videos'; // مسار تخزين الفيديوهات
     } else if (file.mimetype === 'application/pdf') {
-      folder = 'uploads/pdfs';
+      folder = 'uploads/pdfs'; // مسار تخزين ملفات PDF
     } else if (file.mimetype.startsWith('image')) {
-      folder = 'uploads/images';
+      folder = 'uploads/images'; // مسار تخزين الصور
     } else {
       return cb(new Error('❌ نوع الملف غير مدعوم!'), false);
     }
+
+    ensureFolderExists(folder); // إنشاء المجلد إذا لم يكن موجودًا
     cb(null, folder);
   },
   filename: (req, file, cb) => {
@@ -36,7 +46,12 @@ const fileFilter = (req, file, cb) => {
     'image/jpg',
   ];
   if (!allowedTypes.includes(file.mimetype)) {
-    return cb(new Error('❌ نوع الملف غير مدعوم! فقط ملفات MP4, 3GP, PDF, و الصور (JPEG, PNG, JPG) مسموح بها.'), false);
+    return cb(
+      new Error(
+        `❌ نوع الملف "${file.mimetype}" غير مدعوم! فقط ملفات MP4, 3GP, PDF, و الصور (JPEG, PNG, JPG) مسموح بها.`
+      ),
+      false
+    );
   }
   cb(null, true);
 };

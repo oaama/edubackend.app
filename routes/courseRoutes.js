@@ -11,21 +11,27 @@ router.get('/', courseController.getAllCourses);
 // ✅ جلب كورس معين بالـ ID
 router.get('/:id', courseController.getCourseById);
 
-// ✅ إنشاء كورس جديد (للـ Instructors فقط) مع رفع صورة
+// ✅ إنشاء كورس جديد (للـ Instructors و Admin فقط) مع رفع صورة وفيديوهات
 router.post(
   '/create',
   authMiddleware,
-  roleMiddleware(['instructor','admin']),
-  upload.single('courseImage'), // إضافة Middleware رفع صورة الكورس
+  roleMiddleware(['instructor', 'admin']),
+  upload.fields([
+    { name: 'courseImage', maxCount: 1 }, // رفع صورة الكورس
+    { name: 'videos' }, // رفع فيديوهات الكورس بدون حد أقصى
+  ]),
   courseController.createCourse
 );
 
-// ✅ تعديل كورس (للـ Instructors فقط) مع رفع صورة جديدة
+// ✅ تعديل كورس (للـ Instructors فقط) مع رفع صورة وفيديوهات جديدة
 router.put(
   '/:id',
   authMiddleware,
   roleMiddleware(['instructor']),
-  upload.single('courseImage'), // إضافة Middleware رفع صورة جديدة
+  upload.fields([
+    { name: 'courseImage', maxCount: 1 }, // رفع صورة جديدة للكورس
+    { name: 'videos' }, // رفع فيديوهات جديدة للكورس بدون حد أقصى
+  ]),
   courseController.updateCourse
 );
 
