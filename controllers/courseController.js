@@ -48,6 +48,7 @@ exports.createCourse = async (req, res) => {
       category,
       courseImage,
       videos,
+      instructor: req.user._id, // إضافة المدرس من التوكن
     });
 
     await course.save();
