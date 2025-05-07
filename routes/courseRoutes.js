@@ -5,12 +5,6 @@ const authMiddleware = require('../middleware/authMiddleware');
 const roleMiddleware = require('../middleware/roleMiddleware');
 const upload = require('../middleware/uploadMiddleware'); // Middleware رفع الملفات
 
-// ✅ جلب كل الكورسات
-router.get('/', courseController.getAllCourses);
-
-// ✅ جلب كورس معين بالـ ID
-router.get('/:id', courseController.getCourseById);
-
 // ✅ جلب الكورسات الخاصة بـ Instructor معين
 router.get(
   '/my-courses',
@@ -18,6 +12,16 @@ router.get(
   roleMiddleware(['instructor']),
   courseController.getInstructorCourses
 );
+
+// ✅ جلب كورس معين بالـ ID
+router.get(
+  '/:id',
+  authMiddleware,
+  courseController.getCourseById
+);
+
+// ✅ جلب كل الكورسات
+router.get('/', courseController.getAllCourses);
 
 // ✅ إنشاء كورس جديد (للـ Instructors و Admin فقط) مع رفع صورة وفيديوهات
 router.post(
