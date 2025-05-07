@@ -56,11 +56,11 @@ const fileFilter = (req, file, cb) => {
   cb(null, true);
 };
 
-// إعداد Multer
+// إعداد Multer بدون حد لحجم الملفات
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 100 * 1024 * 1024 }, // الحد الأقصى لحجم الملف: 100 ميجا
+  // تمت إزالة الحد الأقصى لحجم الملفات
 });
 
 module.exports = upload;

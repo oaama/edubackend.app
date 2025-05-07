@@ -25,6 +25,19 @@ exports.getCourseById = async (req, res) => {
   }
 };
 
+// ✅ جلب الكورسات الخاصة بـ Instructor معين
+exports.getInstructorCourses = async (req, res) => {
+  try {
+    const instructorId = req.user._id; // جلب ID المدرس من التوكن
+    const courses = await Course.find({ instructor: instructorId });
+
+    res.status(200).json({ message: '✅ تم جلب الكورسات بنجاح', courses });
+  } catch (err) {
+    console.error("❌ Error fetching instructor's courses:", err);
+    res.status(500).json({ error: '❌ حدث خطأ أثناء جلب الكورسات' });
+  }
+};
+
 // ✅ إنشاء كورس جديد مع رفع صورة وفيديوهات
 exports.createCourse = async (req, res) => {
   try {
@@ -59,18 +72,16 @@ exports.createCourse = async (req, res) => {
   }
 };
 
-// ✅ تعديل كورس
-exports.updateCourse = async (req, res) => {
+// ✅ تعديل كورس خاص بـ Instructor معين
+exports.updateInstructorCourse = async (req, res) => {
   try {
-    const { title, description, price, category } = req.body;
+    const instructorId = req.user._id; // جلب ID المدرس من التوكن
+    const courseId = req.params.id;
 
-    if (!title || !description || !price || !category) {
-      return res.status(400).json({ error: '❌ يرجى ملء جميع الحقول المطلوبة: title, description, price, category' });
-    }
-
-    const course = await Course.findById(req.params.id);
+    // التحقق من أن الكورس يخص المدرس
+    const course = await Course.findOne({ _id: courseId, instructor: instructorId });
     if (!course) {
-      return res.status(404).json({ error: '❌ الكورس غير موجود' });
+      return res.status(403).json({ error: '❌ لا يمكنك تعديل هذا الكورس لأنه لا يخصك' });
     }
 
     const updates = { ...req.body };
@@ -81,7 +92,7 @@ exports.updateCourse = async (req, res) => {
       updates.videos = req.files['videos'].map(file => file.path);
     }
 
-    const updatedCourse = await Course.findByIdAndUpdate(req.params.id, updates, { new: true, runValidators: true });
+    const updatedCourse = await Course.findByIdAndUpdate(courseId, updates, { new: true, runValidators: true });
     res.status(200).json({ message: '✅ تم تعديل الكورس بنجاح!', updatedCourse });
   } catch (err) {
     console.error("❌ Error updating course:", err);

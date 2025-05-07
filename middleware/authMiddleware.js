@@ -19,6 +19,11 @@ const authMiddleware = async (req, res, next) => {
       return res.status(401).json({ message: '❌ Invalid Token: المستخدم غير موجود!' });
     }
 
+    // التحقق من أن التوكن نشط
+    if (user.activeToken !== token) {
+      return res.status(401).json({ message: '❌ Invalid Token: التوكن غير نشط!' });
+    }
+
     req.user = user; // إضافة بيانات المستخدم إلى الطلب
     next();
   } catch (err) {
